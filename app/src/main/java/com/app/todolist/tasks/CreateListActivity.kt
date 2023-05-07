@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +50,8 @@ class CreateListActivity : AppCompatActivity() {
                 val bottomSheetDialog = BottomSheetDialog(this@CreateListActivity)
                 val view = layoutInflater.inflate(R.layout.bottom_sheet, null)
                 bottomSheetDialog.setContentView(view)
+                bottomSheetDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                
 
 
                 val selectDateTime = view.findViewById<ImageView>(R.id.timer)
@@ -64,14 +67,23 @@ class CreateListActivity : AppCompatActivity() {
                         // Set the dialog title and message
                         builder.setTitle("Select Task Category")
                         // Add the options as a list of strings
-                        val options = arrayOf("Grocery", "Work", "Sport", "Study","Music","Health", "Home","Other")
+                        val options = arrayOf(
+                            "Grocery",
+                            "Work",
+                            "Sport",
+                            "Study",
+                            "Music",
+                            "Health",
+                            "Home",
+                            "Other"
+                        )
                         builder.setItems(options) { _, which ->
                             // Get the selected option
                             val selectedOption = options[which]
 
                             // Do something with the selected option, like displaying it in a TextView
-                           selectedCategory  = selectedOption
-                            Log.d("Selected Category:",selectedCategory)
+                            selectedCategory = selectedOption
+                            Log.d("Selected Category:", selectedCategory)
                         }
 
                         // Create and show the dialog box
@@ -93,8 +105,8 @@ class CreateListActivity : AppCompatActivity() {
                             val selectedOption = options[which]
 
                             // Do something with the selected option, like displaying it in a TextView
-                            selectedPriority  = selectedOption
-                            Log.d("Selected Priority:",selectedPriority)
+                            selectedPriority = selectedOption
+                            Log.d("Selected Priority:", selectedPriority)
                         }
 
                         // Create and show the dialog box
@@ -134,16 +146,26 @@ class CreateListActivity : AppCompatActivity() {
                 // store value in the database
                 createTodo.setOnClickListener {
                     coroutineScope.launch {
-                        if (title.text!!.isNotEmpty() && des.text!!.isNotEmpty() && selectedCategory!= "" && selectedPriority!= ""){
-                            val todo = TodoItem(0,title.text.toString(),des.text.toString(),selectedDate,
-                            selectedCategory,selectedPriority,false)
+                        if (title.text!!.isNotEmpty() && des.text!!.isNotEmpty() && selectedCategory != "" && selectedPriority != "") {
+                            val todo = TodoItem(
+                                0, title.text.toString(), des.text.toString(), selectedDate,
+                                selectedCategory, selectedPriority, false
+                            )
 
                             todoViewModel.insertTodoItem(todo)
-                            Toast.makeText(this@CreateListActivity,"To-Do Created Successfully",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@CreateListActivity,
+                                "To-Do Created Successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             bottomSheetDialog.dismiss()
 
-                        }else {
-                            Toast.makeText(this@CreateListActivity,"Please fill all the details",Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(
+                                this@CreateListActivity,
+                                "Please fill all the details",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }

@@ -5,6 +5,9 @@
     <color name="purple">#8875FF</color>
     <color name="gray">#363636</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF4949</color>
+    <color name="yellow">#FFFA00</color>
+    <color name="green">#9BB853</color>
     <color name="light_white">#AFAFAF</color>
     <color name="semi_transparent_white">#70AFAFAF</color>
 </resources>

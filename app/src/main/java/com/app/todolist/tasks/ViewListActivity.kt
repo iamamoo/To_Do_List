@@ -1,7 +1,9 @@
 package com.app.todolist.tasks
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.app.todolist.adapter.TodoAdapter
 import com.app.todolist.databinding.ActivityViewListBinding
@@ -12,10 +14,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class ViewListActivity : AppCompatActivity() {
+
     private lateinit var binding : ActivityViewListBinding
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var todoViewModel: TodoViewModel
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewListBinding.inflate(layoutInflater)
@@ -24,17 +29,21 @@ class ViewListActivity : AppCompatActivity() {
         todoViewModel = ViewModelProvider(this)[TodoViewModel::class.java]
 
         setSupportActionBar(binding.viewListToolbar)
-        supportActionBar?.title = "To-Do List"
+        supportActionBar?.title = "Task List"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         coroutineScope.launch {
             val list = todoViewModel.getAllToDoPriority()
-            val adapter = TodoAdapter(list,this@ViewListActivity)
-            binding.todoRecycler.adapter = adapter
+            if (list.isNotEmpty()){
+                val adapter = TodoAdapter(list,this@ViewListActivity,application,coroutineScope)
+                binding.todoRecycler.adapter = adapter
+                adapter.notifyDataSetChanged()
+                binding.textView9.visibility = View.GONE
+            }else {
+                binding.textView9.visibility = View.VISIBLE
+            }
+
         }
-
-
-
 
     }
 

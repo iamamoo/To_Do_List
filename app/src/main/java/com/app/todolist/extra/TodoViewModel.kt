@@ -10,13 +10,13 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
     private val database = Room.databaseBuilder(
         application.applicationContext,
         TodoDatabase::class.java, "todo_database"
-    ).build()
+    ).allowMainThreadQueries().build()
 
     suspend fun insertTodoItem(todoItem: TodoItem) {
         database.todoDao().insertTodoItem(todoItem)
     }
 
-    suspend fun updateTodoItem(todoItem: TodoItem) {
+     fun updateTodoItem(todoItem: TodoItem) {
         database.todoDao().updateTodoItem(todoItem)
     }
 
@@ -31,4 +31,5 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun getAllToDoPriority() : List<TodoItem>{
         return database.todoDao().getAccordingToPriority()
     }
+
 }

@@ -10,7 +10,7 @@ interface TodoDao {
     suspend fun insertTodoItem(todoItem: TodoItem)
 
     @Update
-    suspend fun updateTodoItem(todoItem: TodoItem)
+    fun updateTodoItem(todoItem: TodoItem)
 
     @Delete
     suspend fun deleteTodoItem(todoItem: TodoItem)

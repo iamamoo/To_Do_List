@@ -16,4 +16,14 @@
     <string name="health">Health</string>
     <string name="social">Social</string>
     <string name="high">High</string>
+    <string name="save">Save</string>
+    <string name="help">Help</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="effortlessly_manage_your_tasks_and_conquer_your_day">Effortlessly manage your tasks and conquer your day</string>
+    <string name="tagline">Boost your productivity!\nAdd tasks now</string>
+    <string name="email">Email</string>
+    <string name="your_name">Your Name</string>
+    <string name="allow_edit_of_lists">Allow edit of lists:</string>
+    <string name="update_settings">Update Settings</string>
 </resources>
