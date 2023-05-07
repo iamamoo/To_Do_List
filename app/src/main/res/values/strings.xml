@@ -26,4 +26,9 @@
     <string name="your_name">Your Name</string>
     <string name="allow_edit_of_lists">Allow edit of lists:</string>
     <string name="update_settings">Update Settings</string>
+    <string name="task_time">Task Time</string>
+    <string name="date">May 2,2012</string>
+    <string name="category">Category</string>
+    <string name="priority">Priority</string>
+    <string name="delete_task">Delete Task</string>
 </resources>

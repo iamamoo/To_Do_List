@@ -28,5 +28,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity,ViewListActivity::class.java))
         }
 
+        binding.settings.setOnClickListener {
+            startActivity(Intent(this@MainActivity,SettingActivity::class.java))
+
+        }
+
     }
 }

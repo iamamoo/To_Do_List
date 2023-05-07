@@ -2,11 +2,14 @@ package com.app.todolist.extra
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.app.todolist.models.TodoItem
 import com.app.todolist.room.TodoDatabase
 
 class TodoViewModel(application: Application) : AndroidViewModel(application) {
+
     private val database = Room.databaseBuilder(
         application.applicationContext,
         TodoDatabase::class.java, "todo_database"
@@ -30,6 +33,12 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun getAllToDoPriority() : List<TodoItem>{
         return database.todoDao().getAccordingToPriority()
+
+    }
+
+    private fun getTodos() {
+
+
     }
 
 }
