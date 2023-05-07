@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">To-Do List</string>
     <string name="onboard_screen">OnBoard Screen</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="add_task">Add Task</string>
+    <string name="choose_category">Choose Category</string>
+    <string name="select">Select</string>
+    <string name="home">Home</string>
+    <string name="music">Music</string>
+    <string name="study">Study</string>
+    <string name="design">Design</string>
+    <string name="sport">Sport</string>
+    <string name="work">Work</string>
+    <string name="grocery">Grocery</string>
+    <string name="health">Health</string>
+    <string name="social">Social</string>
+    <string name="high">High</string>
 </resources>
