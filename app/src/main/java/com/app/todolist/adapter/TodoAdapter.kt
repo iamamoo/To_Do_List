@@ -82,7 +82,7 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
                     holder.checkBox.isChecked = false
 
                     val isCompleted = false
-                    val todoItem = TodoItem(model.id,model.title,model.description,model.date,model.category,
+                    val todoItem = TodoItem(model.id,model.title,model.description,model.date,model.time,model.category,
                         model.priority,isCompleted)
 
                     coroutineScope.launch {
@@ -96,7 +96,7 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
                     Toast.makeText(context,"Task Completed",Toast.LENGTH_SHORT).show()
                     holder.checkBox.isChecked = true
                     val isCompleted = true
-                    val todoItem = TodoItem(model.id,model.title,model.description,model.date,model.category,
+                    val todoItem = TodoItem(model.id,model.title,model.description,model.date,model.time,model.category,
                         model.priority,isCompleted)
 
 
@@ -120,6 +120,7 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
                     intent.putExtra("date",model.date)
                     intent.putExtra("category",model.category)
                     intent.putExtra("id",model.id)
+                    intent.putExtra("time",model.time)
                     context.startActivity(intent)
                 } else {
                     Toast.makeText(context,"You're not allowed to edit tasks",Toast.LENGTH_SHORT).show()
@@ -136,6 +137,7 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
                 intent.putExtra("date",model.date)
                 intent.putExtra("category",model.category)
                 intent.putExtra("id",model.id)
+                intent.putExtra("time",model.time)
                 context.startActivity(intent)
             }
         }

@@ -18,6 +18,8 @@ import java.util.*
 class TaskDetailActivity : AppCompatActivity() {
     private lateinit var binding : ActivityTaskDetailBinding
     private lateinit var todoViewModel: TodoViewModel
+    private var sH : String? = null
+    private var sM : String? = null
     private var selectedDate : String? = null
 
 
@@ -46,15 +48,16 @@ class TaskDetailActivity : AppCompatActivity() {
         val id = data.getLongExtra("id",0)
         val isCompleted : Boolean = data.getBooleanExtra("isCompleted",false)
         val date = data.getStringExtra("date")
+        val time = data.getStringExtra("time")
 
-//        binding.taskTimeText.text = date
         binding.categoryText.text = category
         binding.priorityText.text = priority
         binding.taskTimeText.text = date.toString()
+        binding.taskHourText.text = time.toString()
 
         binding.deleteLayout.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) {
-                val todoItem = TodoItem(id,title,des,selectedDate.toString(),category,priority,isCompleted)
+                val todoItem = TodoItem(id,title,des,selectedDate.toString(),"$sH:$sM",category,priority,isCompleted)
                 todoViewModel.deleteTodoItem(todoItem)
 
                 startActivity(Intent(this@TaskDetailActivity, MainActivity::class.java))

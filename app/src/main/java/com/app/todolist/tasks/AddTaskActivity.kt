@@ -2,37 +2,50 @@ package com.app.todolist.tasks
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.app.todolist.MainActivity
 import com.app.todolist.R
 import com.app.todolist.databinding.ActivityAddTaskBinding
 import com.app.todolist.extra.TodoViewModel
+import com.app.todolist.models.Notification
 import com.app.todolist.models.TodoItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class AddTaskActivity : AppCompatActivity() {
     private lateinit var binding : ActivityAddTaskBinding
-    private var selectedCategory : String = ""
-    private var selectedPriority : String = ""
-    private var selectedDate : String = ""
-    private var selectedTitle : String = ""
-    private var selectedDes : String = ""
+
+    private lateinit var selectedCategory : String
+    private lateinit var selectedPriority : String
+    private lateinit var selectedDate : String
+    private lateinit var selectedTitle : String
+    private var isCompleted : Boolean = false
+    private lateinit var selectedDes : String
+    private  var selectedID : Long = 0
+    private var sH : String? = ""
+    private var sM : String? = ""
+    private lateinit var selectedTime : String
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var todoViewModel: TodoViewModel
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddTaskBinding.inflate(layoutInflater)
@@ -47,22 +60,50 @@ class AddTaskActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val data = intent
-        val title : String? = data.getStringExtra("title")
-        binding.title.setText(title)
+        selectedTitle = data.getStringExtra("title").toString()
+        binding.title.setText(selectedTitle)
 
-        val des : String? = data.getStringExtra("description")
-        binding.des.setText(des)
+        selectedDes = data.getStringExtra("description").toString()
+        binding.des.setText(selectedDes)
 
-        val date = data.getStringExtra("date")
-        val priority = data.getStringExtra("priority")
-        val category = data.getStringExtra("category")
-        val id = data.getLongExtra("id",0)
-        val isCompleted : Boolean = data.getBooleanExtra("isCompleted",false)
+        selectedDate = data.getStringExtra("date").toString()
+        selectedPriority = data.getStringExtra("priority").toString()
+        selectedCategory = data.getStringExtra("category").toString()
+        selectedID = data.getLongExtra("id",0)
+        isCompleted = data.getBooleanExtra("isCompleted",false)
+        selectedTime = data.getStringExtra("time").toString()
 
-        binding.taskTimeText.text = date
-        binding.categoryText.text = category
-        binding.priorityText.text = priority
 
+        sM = selectedTime.takeLast(2)
+        Log.d("Last","min: $sM")
+
+        binding.taskTimeText.text = selectedDate
+        binding.categoryText.text = selectedCategory
+        binding.priorityText.text = selectedPriority
+        binding.taskHourText.text = selectedTime
+
+        binding.taskHourLayout.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.Main) {
+                val currentTime = Calendar.getInstance()
+                val hour = currentTime.get(Calendar.HOUR_OF_DAY)
+                val minute = currentTime.get(Calendar.MINUTE)
+
+                val timePickerDialog = TimePickerDialog(this@AddTaskActivity,
+                    { _, selectedHour, selectedMinute ->
+                        // Do something with the selected time
+                        sH = selectedHour.toString()
+                        sM = selectedMinute.toString()
+                        selectedTime = "$sH:$sM"
+                        Log.d("To-DO:","Time: $selectedTime")
+                        binding.taskHourText.text = selectedTime
+
+                    }, hour, minute, true)
+
+                timePickerDialog.show()
+
+
+            }
+        }
 
         binding.setDate.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -138,7 +179,7 @@ class AddTaskActivity : AppCompatActivity() {
 
         binding.deleteLayout.setOnClickListener {
             coroutineScope.launch {
-                val todoItem = TodoItem(id,title,des,selectedDate,category,priority,isCompleted)
+                val todoItem = TodoItem(selectedID,selectedTitle,selectedDes,selectedDate,selectedTime,selectedCategory,selectedPriority,isCompleted)
                 todoViewModel.deleteTodoItem(todoItem)
 
                 startActivity(Intent(this@AddTaskActivity,MainActivity::class.java))
@@ -149,35 +190,32 @@ class AddTaskActivity : AppCompatActivity() {
 
         binding.saveButton.setOnClickListener {
            coroutineScope.launch {
-
                selectedTitle = binding.title.text.toString()
                selectedDes = binding.des.text.toString()
 
-               if (selectedCategory != "" && selectedPriority != "" && selectedDate != "" && selectedTitle != "" && selectedDes != ""){
-                   val todoItem = TodoItem(id, selectedTitle,selectedDes,selectedDate,selectedCategory,selectedPriority,isCompleted)
+               if (sM != null && !sM.equals("")){
+
+                   val method = CreateListActivity()
+                   val formatHour = method.formatHour(sH!!)
+
+                   val dateString = "$selectedDate $formatHour:$sM"
+                   val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                   val dateTime = LocalDateTime.parse(dateString, formatter)
+
+                   val notification = Notification(selectedID.toInt(),selectedTitle,selectedDes, dateTime)
+                   todoViewModel.insertNotification(notification)
+
+                   val todoItem = TodoItem(selectedID,selectedTitle,selectedDes,selectedDate,"$formatHour:$sM",selectedCategory,selectedPriority,isCompleted)
                    todoViewModel.updateTodoItem(todoItem)
+
                    startActivity(Intent(this@AddTaskActivity, MainActivity::class.java))
                    finish()
                    Toast.makeText(this@AddTaskActivity,"Task Updated",Toast.LENGTH_SHORT).show()
-               } else {
-                   Toast.makeText(this@AddTaskActivity,"Please update all the fields",Toast.LENGTH_SHORT).show()
                }
            }
         }
     }
 
-    /*
-
-     lifecycleScope.launch(Dispatchers.Main) {
-                if (selectedCategory!= "" || selectedPriority!= "" || selectedDate != ""){
-                    val todoItem = TodoItem(id,title,des,selectedDate,selectedCategory,selectedPriority,isCompleted)
-                    todoViewModel.updateTodoItem(todoItem)
-                } else {
-                  Toast.makeText(this@AddTaskActivity,"Task Updated",Toast.LENGTH_SHORT).show()
-                }
-            }
-
-     */
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()

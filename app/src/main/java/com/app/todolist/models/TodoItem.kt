@@ -18,6 +18,7 @@ data class TodoItem(
     val title: String? = null,
     val description: String? = null,
     val date : String? = null,
+    val time : String? = null,
     val category : String? = null,
     val priority : String? = null,
     val isCompleted: Boolean = false

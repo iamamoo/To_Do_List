@@ -59,8 +59,8 @@
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/splash_icon"
                     app:tint="@color/white" />
@@ -107,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Create List"
+                    android:text="@string/create_task"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 

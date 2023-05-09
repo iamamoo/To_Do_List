@@ -2,17 +2,31 @@ package com.app.todolist.extra
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.room.Room
+import com.app.todolist.models.Notification
 import com.app.todolist.models.TodoItem
+import com.app.todolist.room.NotificationDatabase
 import com.app.todolist.room.TodoDatabase
 
 class TodoViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database = Room.databaseBuilder(
-        application.applicationContext,
-        TodoDatabase::class.java, "todo_database"
-    ).allowMainThreadQueries().build()
+    private val database by lazy {
+        Room.databaseBuilder(
+            application.applicationContext,
+            TodoDatabase::class.java, "todo_database"
+        ).allowMainThreadQueries().build()
+    }
+
+    private val nDatabase by lazy {
+        Room.databaseBuilder(
+            application.applicationContext,
+            NotificationDatabase::class.java, "notification_database"
+        ).allowMainThreadQueries().build()
+    }
+
+    suspend fun insertNotification(notificationModel: Notification){
+        nDatabase.notificationDao().insertNotification(notificationModel)
+    }
 
     suspend fun insertTodoItem(todoItem: TodoItem) {
         database.todoDao().insertTodoItem(todoItem)
@@ -26,9 +40,6 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         database.todoDao().deleteTodoItem(todoItem)
     }
 
-    suspend fun getAllTodoItems(): List<TodoItem> {
-        return database.todoDao().getAllTodoItems()
-    }
 
     suspend fun getAllToDoPriority() : List<TodoItem>{
         return database.todoDao().getAccordingToPriority()

@@ -3,18 +3,22 @@ package com.app.todolist.tasks
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.app.todolist.R
 import com.app.todolist.databinding.ActivityCreateListBinding
 import com.app.todolist.extra.TodoViewModel
+import com.app.todolist.models.Notification
 import com.app.todolist.models.TodoItem
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
@@ -23,6 +27,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CreateListActivity : AppCompatActivity() {
@@ -31,9 +37,12 @@ class CreateListActivity : AppCompatActivity() {
     private var selectedCategory : String = ""
     private var selectedPriority : String = ""
     private var date : String? = ""
+    private var sH : String? = ""
+    private var sM : String? = ""
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var todoViewModel: TodoViewModel
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +68,7 @@ class CreateListActivity : AppCompatActivity() {
 
                 val category = view.findViewById<ImageView>(R.id.tag)
                 val calendar = view.findViewById<ImageView>(R.id.pickDate)
+                val pickTIme = view.findViewById<ImageView>(R.id.pickTime)
                 val priority = view.findViewById<ImageView>(R.id.flag)
                 val createTodo = view.findViewById<ImageView>(R.id.send)
                 val title = view.findViewById<TextInputEditText>(R.id.title)
@@ -147,17 +157,45 @@ class CreateListActivity : AppCompatActivity() {
                    datePickerDialog.show()
                }
 
+                pickTIme.setOnClickListener {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        val currentTime = Calendar.getInstance()
+                        val hour = currentTime.get(Calendar.HOUR_OF_DAY)
+                        val minute = currentTime.get(Calendar.MINUTE)
+
+                        val timePickerDialog = TimePickerDialog(this@CreateListActivity,
+                            { _, selectedHour, selectedMinute ->
+                                // Do something with the selected time
+                              sH = selectedHour.toString()
+                              sM = selectedMinute.toString()
+                              Log.d("To-DO:","Time: $sH:$sM")
+
+                            }, hour, minute, true)
+
+                        timePickerDialog.show()
+                    }
+                }
+
                 // store value in the database
                 createTodo.setOnClickListener {
-                    coroutineScope.launch {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         if (title.text!!.isNotEmpty() && des.text!!.isNotEmpty() && selectedCategory != "" && selectedPriority != ""
                             && date!! != "") {
                             val todo = TodoItem(
-                                0, title.text.toString(), des.text.toString(), date,
+                                0, title.text.toString(), des.text.toString(), date,"$sH:$sM",
                                 selectedCategory, selectedPriority, false
                             )
-
                             todoViewModel.insertTodoItem(todo)
+
+
+                            val formatHour = formatHour(sH!!)
+                            val dateString = "$date $formatHour:$sM"
+                            val f1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                            val dateTime = LocalDateTime.parse(dateString, f1)
+
+                            val notification = Notification(0,title.text.toString(),des.text.toString(), dateTime)
+                            todoViewModel.insertNotification(notification)
+
                             Toast.makeText(
                                 this@CreateListActivity,
                                 "Task added successfully",
@@ -189,6 +227,42 @@ class CreateListActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return super.onSupportNavigateUp()
+    }
+
+    fun formatHour(hour : String) : String{
+        when(hour) {
+            "0" -> {
+                return "00"
+            }
+            "1" -> {
+                return "01"
+            }
+            "2" -> {
+                return "01"
+            }
+            "3" -> {
+                return "01"
+            }
+            "4" -> {
+                return "01"
+            }
+            "5" -> {
+                return "01"
+            }
+            "6" -> {
+                return "01"
+            }
+            "7" -> {
+                return "01"
+            }
+            "8" -> {
+                return "01"
+            }
+            "9" -> {
+                return "01"
+            }
+        }
+        return "00"
     }
 
 

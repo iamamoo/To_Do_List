@@ -2,53 +2,45 @@ package com.app.todolist.extra
 
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
+import androidx.annotation.RequiresApi
+import androidx.room.Room
+import com.app.todolist.room.NotificationDatabase
+import kotlinx.coroutines.*
+import java.time.LocalDateTime
 import java.util.*
 
-class ReminderService : Service() {
+class NotificationService : Service() {
+    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Default + job)
 
-    private val reminderCalendar: Calendar by lazy {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.YEAR, 2023)
-        calendar.set(Calendar.MONTH, Calendar.MAY)
-        calendar.set(Calendar.DAY_OF_MONTH, 23)
-        calendar.set(Calendar.HOUR_OF_DAY, 18)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar
-    }
-
-    private val notificationReceiver = NotificationReceiver()
-
-    private val timer = Timer()
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        scheduleReminder()
-        return START_STICKY
+        scope.launch {
+            while (true) {
+                val database = Room.databaseBuilder(
+                    application.applicationContext,
+                    NotificationDatabase::class.java, "notification_database"
+                ).allowMainThreadQueries().build()
+
+                val notifications = database.notificationDao().getNotificationsAfter(LocalDateTime.now())
+
+                notifications.forEach {
+                    NotificationReceiver.scheduleNotification(applicationContext, it)
+                }
+                delay(60 * 1000) // Check every minute
+            }
+        }
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        timer.cancel()
+        job.cancel()
     }
 
-    private fun scheduleReminder() {
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                val now = Calendar.getInstance()
-                if (now.after(reminderCalendar)) {
-                    // Trigger the notification
-                    val intent = Intent(applicationContext, NotificationReceiver::class.java)
-                    sendBroadcast(intent)
-
-                    // Stop the service
-                    stopSelf()
-                }
-            }
-        }, 0, 60 * 60 * 1000) // Check every hour
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 }
