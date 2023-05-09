@@ -2,12 +2,15 @@ package com.app.todolist.tasks
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.app.todolist.MainActivity
 import com.app.todolist.R
 import com.app.todolist.databinding.ActivityAddTaskBinding
 import com.app.todolist.extra.TodoViewModel
@@ -16,13 +19,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTaskActivity : AppCompatActivity() {
     private lateinit var binding : ActivityAddTaskBinding
     private var selectedCategory : String = ""
     private var selectedPriority : String = ""
-    private var selectedDate : Date = Date()
+    private var selectedDate : String = ""
+    private var selectedTitle : String = ""
+    private var selectedDes : String = ""
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var todoViewModel: TodoViewModel
@@ -33,6 +39,8 @@ class AddTaskActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         todoViewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+
 
         setSupportActionBar(binding.addTaskToolbar)
         supportActionBar?.title = "Edit"
@@ -67,8 +75,15 @@ class AddTaskActivity : AppCompatActivity() {
                     calendar.set(Calendar.MONTH, month)
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                    selectedDate = calendar.time
-                    binding.taskTimeText.text = selectedDate.time.toString()
+                    selectedDate = calendar.time.toString()
+                    val inputDate = calendar.time.toString()
+                    val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US)
+                    val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+
+                    val unFormatted = inputFormat.parse(inputDate)
+                    selectedDate = outputFormat.format(unFormatted!!)
+
+                    binding.taskTimeText.text = selectedDate
                     Log.d("To-Do:", "Selected date and time: ${calendar.time}")
                 },
 
@@ -125,25 +140,52 @@ class AddTaskActivity : AppCompatActivity() {
             coroutineScope.launch {
                 val todoItem = TodoItem(id,title,des,selectedDate,category,priority,isCompleted)
                 todoViewModel.deleteTodoItem(todoItem)
-                Toast.makeText(this@AddTaskActivity,"Task Deleted",Toast.LENGTH_SHORT).show()
+
+                startActivity(Intent(this@AddTaskActivity,MainActivity::class.java))
                 finish()
+                Toast.makeText(this@AddTaskActivity,"Task Deleted",Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.saveButton.setOnClickListener {
-            coroutineScope.launch {
-                if (selectedCategory!= "" && selectedPriority!= ""){
+           coroutineScope.launch {
+
+               selectedTitle = binding.title.text.toString()
+               selectedDes = binding.des.text.toString()
+
+               if (selectedCategory != "" && selectedPriority != "" && selectedDate != "" && selectedTitle != "" && selectedDes != ""){
+                   val todoItem = TodoItem(id, selectedTitle,selectedDes,selectedDate,selectedCategory,selectedPriority,isCompleted)
+                   todoViewModel.updateTodoItem(todoItem)
+                   startActivity(Intent(this@AddTaskActivity, MainActivity::class.java))
+                   finish()
+                   Toast.makeText(this@AddTaskActivity,"Task Updated",Toast.LENGTH_SHORT).show()
+               } else {
+                   Toast.makeText(this@AddTaskActivity,"Please update all the fields",Toast.LENGTH_SHORT).show()
+               }
+           }
+        }
+    }
+
+    /*
+
+     lifecycleScope.launch(Dispatchers.Main) {
+                if (selectedCategory!= "" || selectedPriority!= "" || selectedDate != ""){
                     val todoItem = TodoItem(id,title,des,selectedDate,selectedCategory,selectedPriority,isCompleted)
                     todoViewModel.updateTodoItem(todoItem)
                 } else {
                   Toast.makeText(this@AddTaskActivity,"Task Updated",Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-    }
+
+     */
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return super.onSupportNavigateUp()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }

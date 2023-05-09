@@ -3,7 +3,6 @@ package com.app.todolist.extra
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.app.todolist.models.TodoItem
 import com.app.todolist.room.TodoDatabase
@@ -19,7 +18,7 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         database.todoDao().insertTodoItem(todoItem)
     }
 
-     fun updateTodoItem(todoItem: TodoItem) {
+     suspend fun updateTodoItem(todoItem: TodoItem) {
         database.todoDao().updateTodoItem(todoItem)
     }
 
@@ -33,12 +32,5 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun getAllToDoPriority() : List<TodoItem>{
         return database.todoDao().getAccordingToPriority()
-
     }
-
-    private fun getTodos() {
-
-
-    }
-
 }

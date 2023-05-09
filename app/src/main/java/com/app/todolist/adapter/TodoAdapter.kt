@@ -74,7 +74,7 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
             holder.title.text = model.title
             holder.description.text = model.description
             holder.priority.text = model.priority
-            holder.time.text = model.date!!.time.toString()
+            holder.time.text = model.date!!.toString()
             holder.category.text = model.category
 
             holder.checkBox.setOnClickListener {
@@ -84,7 +84,10 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
                     val isCompleted = false
                     val todoItem = TodoItem(model.id,model.title,model.description,model.date,model.category,
                         model.priority,isCompleted)
-                    todoViewModel.updateTodoItem(todoItem)
+
+                    coroutineScope.launch {
+                        todoViewModel.updateTodoItem(todoItem)
+                    }
 
                     holder.title.paintFlags = holder.title.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                     holder.description.paintFlags = holder.description.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
@@ -95,7 +98,12 @@ private val coroutineScope: CoroutineScope) : RecyclerView.Adapter<TodoAdapter.V
                     val isCompleted = true
                     val todoItem = TodoItem(model.id,model.title,model.description,model.date,model.category,
                         model.priority,isCompleted)
-                    todoViewModel.updateTodoItem(todoItem)
+
+
+
+                    coroutineScope.launch {
+                        todoViewModel.updateTodoItem(todoItem)
+                    }
 
                     holder.title.paintFlags = holder.title.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     holder.description.paintFlags = holder.description.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG

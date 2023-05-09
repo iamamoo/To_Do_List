@@ -1,6 +1,7 @@
 package com.app.todolist.onboardingscreens
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -16,8 +17,8 @@ class OnBoardOne : AppCompatActivity() {
         setContentView(binding.root)
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         supportActionBar?.hide()
-
 
         // click listener for "SKIP" text
         binding.textView.setOnClickListener {

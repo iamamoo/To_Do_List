@@ -31,4 +31,7 @@
     <string name="category">Category</string>
     <string name="priority">Priority</string>
     <string name="delete_task">Delete Task</string>
+    <string name="no_task_found">No task found</string>
+    <string name="due_date">Due Date</string>
+    <string name="feedback">Feedback</string>
 </resources>

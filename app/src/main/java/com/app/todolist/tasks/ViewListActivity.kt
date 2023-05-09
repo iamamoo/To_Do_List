@@ -1,6 +1,6 @@
 package com.app.todolist.tasks
 
-import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -20,13 +20,15 @@ class ViewListActivity : AppCompatActivity() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var todoViewModel: TodoViewModel
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         todoViewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+
 
         setSupportActionBar(binding.viewListToolbar)
         supportActionBar?.title = "Task List"
@@ -37,14 +39,12 @@ class ViewListActivity : AppCompatActivity() {
             if (list.isNotEmpty()){
                 val adapter = TodoAdapter(list,this@ViewListActivity,application,coroutineScope)
                 binding.todoRecycler.adapter = adapter
-                adapter.notifyDataSetChanged()
-                binding.textView9.visibility = View.GONE
+
+                binding.notaskFound.visibility = View.GONE
             }else {
-                binding.textView9.visibility = View.VISIBLE
+                binding.notaskFound.visibility = View.VISIBLE
             }
-
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

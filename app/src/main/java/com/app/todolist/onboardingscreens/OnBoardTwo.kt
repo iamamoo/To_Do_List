@@ -1,8 +1,10 @@
 package com.app.todolist.onboardingscreens
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.app.todolist.MainActivity
 import com.app.todolist.databinding.ActivityOnBoardTwoBinding
 import com.app.todolist.extra.OnBoardMethods
@@ -13,6 +15,10 @@ class OnBoardTwo : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnBoardTwoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        supportActionBar?.hide()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
 
 
 

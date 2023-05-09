@@ -1,10 +1,13 @@
 package com.app.todolist.tasks
 
+import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.app.todolist.MainActivity
 import com.app.todolist.databinding.ActivityTaskDetailBinding
 import com.app.todolist.extra.TodoViewModel
 import com.app.todolist.models.TodoItem
@@ -15,7 +18,7 @@ import java.util.*
 class TaskDetailActivity : AppCompatActivity() {
     private lateinit var binding : ActivityTaskDetailBinding
     private lateinit var todoViewModel: TodoViewModel
-    private var selectedDate : Date = Date()
+    private var selectedDate : String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +27,8 @@ class TaskDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         todoViewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+
 
         setSupportActionBar(binding.taskDetailToolbar)
         supportActionBar?.title = "Task Details"
@@ -36,22 +41,25 @@ class TaskDetailActivity : AppCompatActivity() {
         val des : String? = data.getStringExtra("description")
         binding.desDetail.text = des
 
-        val date = data.getStringExtra("date")
         val priority = data.getStringExtra("priority")
         val category = data.getStringExtra("category")
         val id = data.getLongExtra("id",0)
         val isCompleted : Boolean = data.getBooleanExtra("isCompleted",false)
+        val date = data.getStringExtra("date")
 
-        binding.taskTimeText.text = date
+//        binding.taskTimeText.text = date
         binding.categoryText.text = category
         binding.priorityText.text = priority
+        binding.taskTimeText.text = date.toString()
 
         binding.deleteLayout.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) {
-                val todoItem = TodoItem(id,title,des,selectedDate,category,priority,isCompleted)
+                val todoItem = TodoItem(id,title,des,selectedDate.toString(),category,priority,isCompleted)
                 todoViewModel.deleteTodoItem(todoItem)
-                Toast.makeText(this@TaskDetailActivity,"Task Deleted", Toast.LENGTH_SHORT).show()
+
+                startActivity(Intent(this@TaskDetailActivity, MainActivity::class.java))
                 finish()
+                Toast.makeText(this@TaskDetailActivity,"Task Deleted", Toast.LENGTH_SHORT).show()
             }
         }
 

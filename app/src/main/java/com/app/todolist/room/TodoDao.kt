@@ -1,16 +1,16 @@
 package com.app.todolist.room
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.app.todolist.models.TodoItem
 
 @Dao
 interface TodoDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTodoItem(todoItem: TodoItem)
 
     @Update
-    fun updateTodoItem(todoItem: TodoItem)
+    suspend fun updateTodoItem(todoItem: TodoItem)
 
     @Delete
     suspend fun deleteTodoItem(todoItem: TodoItem)

@@ -1,7 +1,9 @@
 package com.app.todolist.tasks
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -20,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateListActivity : AppCompatActivity() {
@@ -27,17 +30,19 @@ class CreateListActivity : AppCompatActivity() {
     private val job = Job()
     private var selectedCategory : String = ""
     private var selectedPriority : String = ""
-    private var selectedDate : Date = Date()
+    private var date : String? = ""
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var todoViewModel: TodoViewModel
 
-
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         todoViewModel = ViewModelProvider(this)[TodoViewModel::class.java]
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+
 
 
         setSupportActionBar(binding.toolbar)
@@ -51,11 +56,9 @@ class CreateListActivity : AppCompatActivity() {
                 val view = layoutInflater.inflate(R.layout.bottom_sheet, null)
                 bottomSheetDialog.setContentView(view)
                 bottomSheetDialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                
 
-
-                val selectDateTime = view.findViewById<ImageView>(R.id.timer)
                 val category = view.findViewById<ImageView>(R.id.tag)
+                val calendar = view.findViewById<ImageView>(R.id.pickDate)
                 val priority = view.findViewById<ImageView>(R.id.flag)
                 val createTodo = view.findViewById<ImageView>(R.id.send)
                 val title = view.findViewById<TextInputEditText>(R.id.title)
@@ -77,10 +80,9 @@ class CreateListActivity : AppCompatActivity() {
                             "Home",
                             "Other"
                         )
-                        builder.setItems(options) { _, which ->
-                            // Get the selected option
-                            val selectedOption = options[which]
 
+                        builder.setItems(options) { _, which ->
+                            val selectedOption = options[which]
                             // Do something with the selected option, like displaying it in a TextView
                             selectedCategory = selectedOption
                             Log.d("Selected Category:", selectedCategory)
@@ -106,7 +108,7 @@ class CreateListActivity : AppCompatActivity() {
 
                             // Do something with the selected option, like displaying it in a TextView
                             selectedPriority = selectedOption
-                            Log.d("Selected Priority:", selectedPriority)
+                            Log.d("To-Do", selectedPriority)
                         }
 
                         // Create and show the dialog box
@@ -116,46 +118,49 @@ class CreateListActivity : AppCompatActivity() {
 
                 }
 
+               calendar.setOnClickListener {
+                   val calendar1 = Calendar.getInstance()
+                   // Create a DatePickerDialog
+                   val datePickerDialog = DatePickerDialog(
+                       this@CreateListActivity,
+                       R.style.MyDatePickerDialogTheme, { _, year, month, dayOfMonth ->
+                           calendar1.set(Calendar.YEAR, year)
+                           calendar1.set(Calendar.MONTH, month)
+                           calendar1.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
+                           val inputDate = calendar1.time.toString()
+                           val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
+                           val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
+                           val unFormatted = inputFormat.parse(inputDate)
+                           date = outputFormat.format(unFormatted!!)
 
-                selectDateTime.setOnClickListener {
-                    val calendar = Calendar.getInstance()
-                    // Create a DatePickerDialog
-                    val datePickerDialog = DatePickerDialog(
-                        this@CreateListActivity,
-                        R.style.MyDatePickerDialogTheme,
-                        { _, year, month, dayOfMonth ->
-                            calendar.set(Calendar.YEAR, year)
-                            calendar.set(Calendar.MONTH, month)
-                            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                           Log.d("To-Do:", "Selected date and time: $date")
+                       },
 
-                            selectedDate = calendar.time
-                            Log.d("To-Do:", "Selected date and time: ${calendar.time}")
-                        },
+                       calendar1.get(Calendar.YEAR),
+                       calendar1.get(Calendar.MONTH),
+                       calendar1.get(Calendar.DAY_OF_MONTH)
 
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                    )
-                    // Show the DatePickerDialog
-                    datePickerDialog.datePicker.minDate
-                    datePickerDialog.show()
-                }
+                   )
+                   // Show the DatePickerDialog
+                   datePickerDialog.show()
+               }
 
                 // store value in the database
                 createTodo.setOnClickListener {
                     coroutineScope.launch {
-                        if (title.text!!.isNotEmpty() && des.text!!.isNotEmpty() && selectedCategory != "" && selectedPriority != "") {
+                        if (title.text!!.isNotEmpty() && des.text!!.isNotEmpty() && selectedCategory != "" && selectedPriority != ""
+                            && date!! != "") {
                             val todo = TodoItem(
-                                0, title.text.toString(), des.text.toString(), selectedDate,
+                                0, title.text.toString(), des.text.toString(), date,
                                 selectedCategory, selectedPriority, false
                             )
 
                             todoViewModel.insertTodoItem(todo)
                             Toast.makeText(
                                 this@CreateListActivity,
-                                "To-Do Created Successfully",
+                                "Task added successfully",
                                 Toast.LENGTH_SHORT
                             ).show()
                             bottomSheetDialog.dismiss()
@@ -176,14 +181,13 @@ class CreateListActivity : AppCompatActivity() {
 
 
     }
-
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        finish()
         return super.onSupportNavigateUp()
     }
 
