@@ -39,8 +39,8 @@ class ViewListActivity : AppCompatActivity() {
             if (list.isNotEmpty()){
                 val adapter = TodoAdapter(list,this@ViewListActivity,application,coroutineScope)
                 binding.todoRecycler.adapter = adapter
-
                 binding.notaskFound.visibility = View.GONE
+
             }else {
                 binding.notaskFound.visibility = View.VISIBLE
             }

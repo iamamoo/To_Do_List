@@ -128,34 +128,34 @@ class CreateListActivity : AppCompatActivity() {
 
                 }
 
-               calendar.setOnClickListener {
-                   val calendar1 = Calendar.getInstance()
-                   // Create a DatePickerDialog
-                   val datePickerDialog = DatePickerDialog(
-                       this@CreateListActivity,
-                       R.style.MyDatePickerDialogTheme, { _, year, month, dayOfMonth ->
-                           calendar1.set(Calendar.YEAR, year)
-                           calendar1.set(Calendar.MONTH, month)
-                           calendar1.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                calendar.setOnClickListener {
+                    val calendar1 = Calendar.getInstance()
+                    // Create a DatePickerDialog
+                    val datePickerDialog = DatePickerDialog(
+                        this@CreateListActivity,
+                        R.style.MyDatePickerDialogTheme, { _, year, month, dayOfMonth ->
+                            calendar1.set(Calendar.YEAR, year)
+                            calendar1.set(Calendar.MONTH, month)
+                            calendar1.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                           val inputDate = calendar1.time.toString()
-                           val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
-                           val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+                            val inputDate = calendar1.time.toString()
+                            val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
+                            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
-                           val unFormatted = inputFormat.parse(inputDate)
-                           date = outputFormat.format(unFormatted!!)
+                            val unFormatted = inputFormat.parse(inputDate)
+                            date = outputFormat.format(unFormatted!!)
 
-                           Log.d("To-Do:", "Selected date and time: $date")
-                       },
+                            Log.d("To-Do:", "Selected date and time: $date")
+                        },
 
-                       calendar1.get(Calendar.YEAR),
-                       calendar1.get(Calendar.MONTH),
-                       calendar1.get(Calendar.DAY_OF_MONTH)
+                        calendar1.get(Calendar.YEAR),
+                        calendar1.get(Calendar.MONTH),
+                        calendar1.get(Calendar.DAY_OF_MONTH)
 
-                   )
-                   // Show the DatePickerDialog
-                   datePickerDialog.show()
-               }
+                    )
+                    // Show the DatePickerDialog
+                    datePickerDialog.show()
+                }
 
                 pickTIme.setOnClickListener {
                     lifecycleScope.launch(Dispatchers.Main) {
@@ -166,9 +166,9 @@ class CreateListActivity : AppCompatActivity() {
                         val timePickerDialog = TimePickerDialog(this@CreateListActivity,
                             { _, selectedHour, selectedMinute ->
                                 // Do something with the selected time
-                              sH = selectedHour.toString()
-                              sM = selectedMinute.toString()
-                              Log.d("To-DO:","Time: $sH:$sM")
+                                sH = selectedHour.toString()
+                                sM = selectedMinute.toString()
+                                Log.d("To-DO:","Time: $sH:$sM")
 
                             }, hour, minute, true)
 
@@ -181,8 +181,12 @@ class CreateListActivity : AppCompatActivity() {
                     lifecycleScope.launch(Dispatchers.Main) {
                         if (title.text!!.isNotEmpty() && des.text!!.isNotEmpty() && selectedCategory != "" && selectedPriority != ""
                             && date!! != "") {
+
+                            val hour = formatHour(sH!!)
+                            val minutes = formatHour(sM!!)
+
                             val todo = TodoItem(
-                                0, title.text.toString(), des.text.toString(), date,"$sH:$sM",
+                                0, title.text.toString(), des.text.toString(), date,"$hour:$minutes",
                                 selectedCategory, selectedPriority, false
                             )
                             todoViewModel.insertTodoItem(todo)
@@ -265,6 +269,4 @@ class CreateListActivity : AppCompatActivity() {
         }
         return hour
     }
-
-
 }

@@ -15,6 +15,7 @@ import java.time.ZoneId
 
 class NotificationReceiver : BroadcastReceiver() {
 
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra("notificationId", 0)
         val notificationTitle = intent.getStringExtra("notificationTitle")
@@ -35,7 +36,7 @@ class NotificationReceiver : BroadcastReceiver() {
         }
 
         val notification = NotificationCompat.Builder(context, "default")
-            .setSmallIcon(R.drawable.timer)
+            .setSmallIcon(R.drawable.calendar)
             .setContentTitle(notificationTitle)
             .setContentText(notificationMessage)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

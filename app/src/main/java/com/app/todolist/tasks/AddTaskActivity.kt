@@ -75,7 +75,9 @@ class AddTaskActivity : AppCompatActivity() {
 
 
         sM = selectedTime.takeLast(2)
-        Log.d("Last","min: $sM")
+        sH = selectedTime.take(2)
+
+        Log.d("Last","$sH: $sM")
 
         binding.taskTimeText.text = selectedDate
         binding.categoryText.text = selectedCategory
@@ -182,6 +184,20 @@ class AddTaskActivity : AppCompatActivity() {
                 val todoItem = TodoItem(selectedID,selectedTitle,selectedDes,selectedDate,selectedTime,selectedCategory,selectedPriority,isCompleted)
                 todoViewModel.deleteTodoItem(todoItem)
 
+                // delete todo from notification table
+                coroutineScope.launch {
+                    val method = CreateListActivity()
+                    val formatHour = method.formatHour(sH!!)
+                    val formatMinute = method.formatHour(sM!!)
+                    val dateString = "$selectedDate $formatHour:$formatMinute"
+                    val f1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+
+                    val dateTime = LocalDateTime.parse(dateString, f1)
+                    val notification =
+                        Notification(selectedID.toInt(), title.toString(), selectedDes, dateTime)
+                    todoViewModel.deleteNotification(notification)
+                }
+
                 startActivity(Intent(this@AddTaskActivity,MainActivity::class.java))
                 finish()
                 Toast.makeText(this@AddTaskActivity,"Task Deleted",Toast.LENGTH_SHORT).show()
@@ -189,31 +205,30 @@ class AddTaskActivity : AppCompatActivity() {
         }
 
         binding.saveButton.setOnClickListener {
-           coroutineScope.launch {
-               selectedTitle = binding.title.text.toString()
-               selectedDes = binding.des.text.toString()
+            coroutineScope.launch {
+                selectedTitle = binding.title.text.toString()
+                selectedDes = binding.des.text.toString()
 
-               if (sM != null && !sM.equals("")){
+                if (sH != "" && !sM.equals("")){
+                    val method = CreateListActivity()
+                    val formatHour = method.formatHour(sH!!)
+                    val formatMinute = method.formatHour(sM!!)
 
-                   val method = CreateListActivity()
-                   val formatHour = method.formatHour(sH!!)
-                   val formatMinute = method.formatHour(sM!!)
+                    val dateString = "$selectedDate $formatHour:$formatMinute"
+                    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+                    val dateTime = LocalDateTime.parse(dateString, formatter)
 
-                   val dateString = "$selectedDate $formatHour:$formatMinute"
-                   val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-                   val dateTime = LocalDateTime.parse(dateString, formatter)
+                    val notification = Notification(selectedID.toInt(),selectedTitle,selectedDes, dateTime)
+                    todoViewModel.updateNotification(notification)
 
-                   val notification = Notification(selectedID.toInt(),selectedTitle,selectedDes, dateTime)
-                   todoViewModel.insertNotification(notification)
+                    val todoItem = TodoItem(selectedID,selectedTitle,selectedDes,selectedDate,"$formatHour:$formatMinute",selectedCategory,selectedPriority,isCompleted)
+                    todoViewModel.updateTodoItem(todoItem)
 
-                   val todoItem = TodoItem(selectedID,selectedTitle,selectedDes,selectedDate,"$formatHour:$sM",selectedCategory,selectedPriority,isCompleted)
-                   todoViewModel.updateTodoItem(todoItem)
-
-                   startActivity(Intent(this@AddTaskActivity, MainActivity::class.java))
-                   finish()
-                   Toast.makeText(this@AddTaskActivity,"Task Updated",Toast.LENGTH_SHORT).show()
-               }
-           }
+                    startActivity(Intent(this@AddTaskActivity, MainActivity::class.java))
+                    finish()
+                    Toast.makeText(this@AddTaskActivity,"Task Updated",Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

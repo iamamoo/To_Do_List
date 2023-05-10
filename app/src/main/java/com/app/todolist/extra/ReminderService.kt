@@ -13,11 +13,10 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+
 class NotificationService : Service() {
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Default + job)
-
-    private var formatted : String = "no date found"
     private lateinit var dateTime : LocalDateTime
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -67,7 +66,7 @@ class NotificationService : Service() {
             }
 
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -79,3 +78,4 @@ class NotificationService : Service() {
         return null
     }
 }
+

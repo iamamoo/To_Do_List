@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -15,7 +16,8 @@
         android:theme="@style/Theme.ToDoList"
         tools:targetApi="31">
 
-        <service android:name=".extra.NotificationService"/>
+        <service android:name=".extra.NotificationService"
+            android:stopWithTask="false"/>
 
         <receiver
             android:name=".extra.NotificationReceiver"

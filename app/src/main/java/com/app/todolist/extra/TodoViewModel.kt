@@ -17,6 +17,7 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         ).allowMainThreadQueries().build()
     }
 
+
     private val nDatabase by lazy {
         Room.databaseBuilder(
             application.applicationContext,
@@ -24,8 +25,17 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         ).allowMainThreadQueries().build()
     }
 
+
     suspend fun insertNotification(notificationModel: Notification){
         nDatabase.notificationDao().insertNotification(notificationModel)
+    }
+
+    suspend fun updateNotification(notification : Notification){
+        nDatabase.notificationDao().updateNotificationItem(notification)
+    }
+
+    suspend fun deleteNotification(notification: Notification){
+        nDatabase.notificationDao().deleteNotificationItem(notification)
     }
 
     suspend fun insertTodoItem(todoItem: TodoItem) {

@@ -22,8 +22,6 @@ class SplashActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         supportActionBar?.hide()
 
-        val intent2 = Intent(this, NotificationService::class.java)
-        this.startService(intent2)
 
         // only new user go to onBoardScreen
         // old users direct go to MainScreen

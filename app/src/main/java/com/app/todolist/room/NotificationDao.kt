@@ -1,10 +1,8 @@
 package com.app.todolist.room
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.app.todolist.models.Notification
+import com.app.todolist.models.TodoItem
 import java.time.LocalDateTime
 
 @Dao
@@ -14,4 +12,11 @@ interface NotificationDao {
 
     @Query("SELECT * FROM notifications WHERE dateTime >= :timeDate")
     fun getNotificationsAfter(timeDate: LocalDateTime): List<Notification>
+
+    @Delete
+    suspend fun deleteNotificationItem(notification : Notification)
+
+    @Update
+    suspend fun updateNotificationItem(notification : Notification)
+
 }
