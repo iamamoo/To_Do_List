@@ -197,8 +197,9 @@ class AddTaskActivity : AppCompatActivity() {
 
                    val method = CreateListActivity()
                    val formatHour = method.formatHour(sH!!)
+                   val formatMinute = method.formatHour(sM!!)
 
-                   val dateString = "$selectedDate $formatHour:$sM"
+                   val dateString = "$selectedDate $formatHour:$formatMinute"
                    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
                    val dateTime = LocalDateTime.parse(dateString, formatter)
 

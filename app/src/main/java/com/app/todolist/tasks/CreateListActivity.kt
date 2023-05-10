@@ -189,7 +189,8 @@ class CreateListActivity : AppCompatActivity() {
 
 
                             val formatHour = formatHour(sH!!)
-                            val dateString = "$date $formatHour:$sM"
+                            val formatMinute = formatHour(sM!!)
+                            val dateString = "$date $formatHour:$formatMinute"
                             val f1 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
                             val dateTime = LocalDateTime.parse(dateString, f1)
 
@@ -238,31 +239,31 @@ class CreateListActivity : AppCompatActivity() {
                 return "01"
             }
             "2" -> {
-                return "01"
+                return "02"
             }
             "3" -> {
-                return "01"
+                return "03"
             }
             "4" -> {
-                return "01"
+                return "04"
             }
             "5" -> {
-                return "01"
+                return "05"
             }
             "6" -> {
-                return "01"
+                return "06"
             }
             "7" -> {
-                return "01"
+                return "07"
             }
             "8" -> {
-                return "01"
+                return "08"
             }
             "9" -> {
-                return "01"
+                return "09"
             }
         }
-        return "00"
+        return hour
     }
 
 

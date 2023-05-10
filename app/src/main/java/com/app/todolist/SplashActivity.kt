@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import com.app.todolist.extra.NotificationService
 import com.app.todolist.onboardingscreens.OnBoardOne
 
 @SuppressLint("CustomSplashScreen")
@@ -20,6 +21,9 @@ class SplashActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         supportActionBar?.hide()
+
+        val intent2 = Intent(this, NotificationService::class.java)
+        this.startService(intent2)
 
         // only new user go to onBoardScreen
         // old users direct go to MainScreen

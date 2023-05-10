@@ -12,6 +12,6 @@ interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNotification(notification: Notification)
 
-    @Query("SELECT * FROM notifications WHERE dateTime >= :dateTime")
-    fun getNotificationsAfter(dateTime: LocalDateTime): List<Notification>
+    @Query("SELECT * FROM notifications WHERE dateTime >= :timeDate")
+    fun getNotificationsAfter(timeDate: LocalDateTime): List<Notification>
 }

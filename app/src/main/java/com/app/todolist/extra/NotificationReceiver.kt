@@ -14,7 +14,7 @@ import java.time.ZoneId
 
 
 class NotificationReceiver : BroadcastReceiver() {
-    @SuppressLint("UnsafeProtectedBroadcastReceiver")
+
     override fun onReceive(context: Context, intent: Intent) {
         val notificationId = intent.getIntExtra("notificationId", 0)
         val notificationTitle = intent.getStringExtra("notificationTitle")
@@ -27,7 +27,7 @@ class NotificationReceiver : BroadcastReceiver() {
             val channel = NotificationChannel(
                 "default",
                 "Default Channel",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
         } else {
@@ -48,7 +48,6 @@ class NotificationReceiver : BroadcastReceiver() {
     companion object {
         @SuppressLint("UnspecifiedImmutableFlag")
         @RequiresApi(Build.VERSION_CODES.O)
-
         fun scheduleNotification(context: Context, notification: com.app.todolist.models.Notification) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -57,6 +56,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 putExtra("notificationTitle", notification.title)
                 putExtra("notificationMessage", notification.message)
             }
+
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
                 notification.id,

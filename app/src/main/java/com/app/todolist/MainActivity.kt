@@ -23,11 +23,6 @@ class MainActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
 
-        val intent = Intent(this, NotificationReceiver::class.java)
-        this.sendBroadcast(intent)
-
-        val intent2 = Intent(this, NotificationService::class.java)
-        this.startService(intent2)
 
         // send user to help screen
         binding.help.setOnClickListener {
