@@ -1,12 +1,19 @@
 package com.app.todolist.extra
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.room.Room
+import com.app.todolist.R
 import com.app.todolist.room.NotificationDatabase
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
@@ -66,9 +73,43 @@ class NotificationService : Service() {
             }
 
         }
-        return START_STICKY
+
+        val notification = createNotification()
+        startForeground(NOTIFICATION_ID,notification)
+        return START_NOT_STICKY
     }
 
+    private fun createNotification(): Notification {
+        val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+
+        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle("Add Task")
+            .setContentText("Enjoy your day!")
+            .setSmallIcon(R.drawable.calendar)
+            .setLargeIcon(largeIcon)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setOngoing(false)
+
+        return notificationBuilder.build()
+    }
+
+    companion object {
+        const val NOTIFICATION_CHANNEL_ID = "my_channel_id"
+        const val NOTIFICATION_ID = 1
+    }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "My Channel Name"
+            val descriptionText = "My channel description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -76,6 +117,14 @@ class NotificationService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        scope.launch {
+            createNotificationChannel()
+        }
+
     }
 }
 

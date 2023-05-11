@@ -10,20 +10,19 @@ import com.app.todolist.room.TodoDatabase
 
 class TodoViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database by lazy {
+    private val database =
         Room.databaseBuilder(
             application.applicationContext,
             TodoDatabase::class.java, "todo_database"
         ).allowMainThreadQueries().build()
-    }
 
 
-    private val nDatabase by lazy {
+
+    private val nDatabase =
         Room.databaseBuilder(
             application.applicationContext,
             NotificationDatabase::class.java, "notification_database"
         ).allowMainThreadQueries().build()
-    }
 
 
     suspend fun insertNotification(notificationModel: Notification){
