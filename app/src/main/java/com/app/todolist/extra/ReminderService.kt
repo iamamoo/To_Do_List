@@ -1,9 +1,6 @@
 package com.app.todolist.extra
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -15,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.room.Room
 import com.app.todolist.R
 import com.app.todolist.room.NotificationDatabase
+import com.app.todolist.tasks.CreateListActivity
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -69,9 +67,11 @@ class NotificationService : Service() {
                 }
                 database.close()
                 delay(60 * 1000) // Check every minute
-
             }
 
+        }
+        when (intent?.action) {
+            "STOP_SERVICE" -> stopForegroundService()
         }
 
         val notification = createNotification()
@@ -79,15 +79,29 @@ class NotificationService : Service() {
         return START_NOT_STICKY
     }
 
+    private fun stopForegroundService() {
+        stopForeground(true)
+        stopSelf()
+    }
+
     private fun createNotification(): Notification {
         val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+        val intent = Intent(this, CreateListActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
+        val stopIntent = Intent(this, NotificationService::class.java)
+        stopIntent.action = "STOP_SERVICE"
+        val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, 0)
+
+
 
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("Add Task")
             .setContentText("Enjoy your day!")
             .setSmallIcon(R.drawable.calendar)
             .setLargeIcon(largeIcon)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .addAction(R.drawable.timer, "Stop Reminder", stopPendingIntent)
             .setOngoing(false)
 
         return notificationBuilder.build()
@@ -97,6 +111,7 @@ class NotificationService : Service() {
         const val NOTIFICATION_CHANNEL_ID = "my_channel_id"
         const val NOTIFICATION_ID = 1
     }
+
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "My Channel Name"
