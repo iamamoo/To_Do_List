@@ -2,7 +2,6 @@ package com.app.todolist.room
 
 import androidx.room.*
 import com.app.todolist.models.Notification
-import com.app.todolist.models.TodoItem
 import java.time.LocalDateTime
 
 @Dao

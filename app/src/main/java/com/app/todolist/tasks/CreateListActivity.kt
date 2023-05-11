@@ -129,16 +129,16 @@ class CreateListActivity : AppCompatActivity() {
                 }
 
                 calendar.setOnClickListener {
-                    val calendar1 = Calendar.getInstance()
+                    val cc = Calendar.getInstance()
                     // Create a DatePickerDialog
                     val datePickerDialog = DatePickerDialog(
                         this@CreateListActivity,
                         R.style.MyDatePickerDialogTheme, { _, year, month, dayOfMonth ->
-                            calendar1.set(Calendar.YEAR, year)
-                            calendar1.set(Calendar.MONTH, month)
-                            calendar1.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                            cc.set(Calendar.YEAR, year)
+                            cc.set(Calendar.MONTH, month)
+                            cc.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                            val inputDate = calendar1.time.toString()
+                            val inputDate = cc.time.toString()
                             val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
                             val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
 
@@ -148,9 +148,9 @@ class CreateListActivity : AppCompatActivity() {
                             Log.d("To-Do:", "Selected date and time: $date")
                         },
 
-                        calendar1.get(Calendar.YEAR),
-                        calendar1.get(Calendar.MONTH),
-                        calendar1.get(Calendar.DAY_OF_MONTH)
+                        cc.get(Calendar.YEAR),
+                        cc.get(Calendar.MONTH),
+                        cc.get(Calendar.DAY_OF_MONTH)
 
                     )
                     // Show the DatePickerDialog
@@ -164,6 +164,7 @@ class CreateListActivity : AppCompatActivity() {
                         val minute = currentTime.get(Calendar.MINUTE)
 
                         val timePickerDialog = TimePickerDialog(this@CreateListActivity,
+                            R.style.MyTimePickerDialogTheme,
                             { _, selectedHour, selectedMinute ->
                                 // Do something with the selected time
                                 sH = selectedHour.toString()

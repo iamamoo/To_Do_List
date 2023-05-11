@@ -24,7 +24,8 @@ class NotificationService : Service() {
     private val scope = CoroutineScope(Dispatchers.Default + job)
     private lateinit var dateTime : LocalDateTime
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         scope.launch {
             while (true) {
@@ -76,24 +77,25 @@ class NotificationService : Service() {
 
         val notification = createNotification()
         startForeground(NOTIFICATION_ID,notification)
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun stopForegroundService() {
         stopForeground(true)
+        Log.d("tag","Service Stopped")
         stopSelf()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotification(): Notification {
         val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
         val intent = Intent(this, CreateListActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val stopIntent = Intent(this, NotificationService::class.java)
         stopIntent.action = "STOP_SERVICE"
-        val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, 0)
 
-
+        val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("Add Task")
@@ -102,7 +104,6 @@ class NotificationService : Service() {
             .setLargeIcon(largeIcon)
             .setContentIntent(pendingIntent)
             .addAction(R.drawable.timer, "Stop Reminder", stopPendingIntent)
-            .setOngoing(false)
 
         return notificationBuilder.build()
     }
@@ -112,7 +113,9 @@ class NotificationService : Service() {
         const val NOTIFICATION_ID = 1
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "My Channel Name"
             val descriptionText = "My channel description"
@@ -125,6 +128,7 @@ class NotificationService : Service() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -134,6 +138,7 @@ class NotificationService : Service() {
         return null
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         scope.launch {
@@ -142,4 +147,3 @@ class NotificationService : Service() {
 
     }
 }
-

@@ -18,7 +18,6 @@
 
         <service android:name=".extra.NotificationService"
             android:foregroundServiceType="dataSync"
-            tools:remove="never"
             android:stopWithTask="false"/>
 
 
@@ -34,6 +33,7 @@
         <activity
             android:name=".AboutActivity"
             android:exported="false" />
+
         <activity
             android:name=".HelpActivity"
             android:exported="false" />
@@ -41,30 +41,39 @@
         <activity
             android:name=".tasks.TaskDetailActivity"
             android:exported="false" />
+
         <activity
             android:name=".SettingActivity"
             android:exported="false" />
+
         <activity
             android:name=".tasks.AddTaskActivity"
             android:exported="false" />
+
         <activity
             android:name=".tasks.ViewListActivity"
             android:exported="false" />
+
         <activity
             android:name=".tasks.CreateListActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".onboardingscreens.OnBoardOne"
             android:exported="false" />
+
         <activity
             android:name=".onboardingscreens.OnBoardTwo"
             android:exported="false" />
+
         <activity
             android:name=".onboardingscreens.OnBoardThree"
             android:exported="false" />
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">

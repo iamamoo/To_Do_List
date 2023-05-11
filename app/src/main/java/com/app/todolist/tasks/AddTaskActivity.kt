@@ -91,6 +91,7 @@ class AddTaskActivity : AppCompatActivity() {
                 val minute = currentTime.get(Calendar.MINUTE)
 
                 val timePickerDialog = TimePickerDialog(this@AddTaskActivity,
+                    R.style.MyTimePickerDialogTheme,
                     { _, selectedHour, selectedMinute ->
                         // Do something with the selected time
                         sH = selectedHour.toString()

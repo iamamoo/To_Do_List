@@ -57,6 +57,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
 
+
         binding.updateSettings.setOnClickListener {
             coroutineScope.launch {
 
@@ -90,7 +91,8 @@ class SettingActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                } else {
+                }
+                else {
                     Toast.makeText(
                         this@SettingActivity,
                         "Please fill all the details",

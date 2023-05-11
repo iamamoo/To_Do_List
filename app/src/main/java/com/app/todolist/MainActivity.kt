@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,47 +29,47 @@ class MainActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        lifecycleScope.launch(Dispatchers.Main) {
 
-            if (isServiceRunning(this@MainActivity)){
-                Log.d("tag","Service is already running")
+        lifecycleScope.launch(Dispatchers.Main) {
+            if (isServiceRunning(this@MainActivity)) {
+                Log.d("tag", "Service is already running")
             } else {
-                val intent = Intent(this@MainActivity,
-                    NotificationService::class.java)
+                val intent = Intent(
+                    this@MainActivity,
+                    NotificationService::class.java
+                )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    ContextCompat.startForegroundService(this@MainActivity,intent)
-                }
-                else {
-                    Log.d("tag","This Service cannot run on this device")
+                    ContextCompat.startForegroundService(this@MainActivity, intent)
+                } else {
+                    Log.d("tag", "This Service cannot run on this device")
                 }
             }
-
         }
 
 
         // send user to help screen
         binding.help.setOnClickListener {
-            startActivity(Intent(this@MainActivity,HelpActivity::class.java))
+            startActivity(Intent(this@MainActivity, HelpActivity::class.java))
         }
 
         // send user to about screen
         binding.about.setOnClickListener {
-            startActivity(Intent(this@MainActivity,AboutActivity::class.java))
+            startActivity(Intent(this@MainActivity, AboutActivity::class.java))
         }
 
 
         // send user to the create list activity
         binding.createList.setOnClickListener {
-            startActivity(Intent(this@MainActivity,CreateListActivity::class.java))
+            startActivity(Intent(this@MainActivity, CreateListActivity::class.java))
         }
 
         // send user to the view list activity
         binding.viewList.setOnClickListener {
-            startActivity(Intent(this@MainActivity,ViewListActivity::class.java))
+            startActivity(Intent(this@MainActivity, ViewListActivity::class.java))
         }
 
         binding.settings.setOnClickListener {
-            startActivity(Intent(this@MainActivity,SettingActivity::class.java))
+            startActivity(Intent(this@MainActivity, SettingActivity::class.java))
 
         }
     }
@@ -84,7 +84,6 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
-
 
 
 }

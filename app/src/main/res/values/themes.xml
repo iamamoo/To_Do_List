@@ -16,6 +16,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="CustomTimePickerStyle" parent="@android:style/Widget.Material.TimePicker">
+        <item name="android:numbersTextColor">@color/gray</item>
+        <item name="android:headerBackground">@color/black</item>
+        <item name="android:numbersSelectorColor">@color/black_light</item>
+    </style>
+
+
     <style name="bold_text_theme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="fontFamily">@font/lato_bold</item>
     </style>

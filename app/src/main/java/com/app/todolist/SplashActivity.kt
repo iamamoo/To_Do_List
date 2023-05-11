@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import com.app.todolist.extra.NotificationService
 import com.app.todolist.onboardingscreens.OnBoardOne
 
 @SuppressLint("CustomSplashScreen")

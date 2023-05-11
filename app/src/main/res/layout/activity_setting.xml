@@ -107,6 +107,7 @@
 
         </com.google.android.material.switchmaterial.SwitchMaterial>
 
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/updateSettings"
             android:layout_width="match_parent"

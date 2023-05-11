@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import com.app.todolist.R
 import java.time.ZoneId
 
-
 class NotificationReceiver : BroadcastReceiver() {
 
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
@@ -47,8 +46,8 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     companion object {
+        @RequiresApi(Build.VERSION_CODES.S)
         @SuppressLint("UnspecifiedImmutableFlag")
-        @RequiresApi(Build.VERSION_CODES.O)
         fun scheduleNotification(context: Context, notification: com.app.todolist.models.Notification) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -62,7 +61,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 context,
                 notification.id,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_IMMUTABLE
             )
 
             alarmManager.setExact(
