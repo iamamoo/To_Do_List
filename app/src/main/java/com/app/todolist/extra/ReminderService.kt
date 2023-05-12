@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -88,7 +89,9 @@ class NotificationService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotification(): Notification {
-        val largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
+
+        val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.large_icon)
+
         val intent = Intent(this, CreateListActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
@@ -96,12 +99,16 @@ class NotificationService : Service() {
         stopIntent.action = "STOP_SERVICE"
 
         val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+            val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
 
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("Add Task")
             .setContentText("Enjoy your day!")
             .setSmallIcon(R.drawable.calendar)
             .setLargeIcon(largeIcon)
+            .setSound(sound)
+            .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
             .setContentIntent(pendingIntent)
             .addAction(R.drawable.timer, "Stop Reminder", stopPendingIntent)
 
@@ -110,7 +117,7 @@ class NotificationService : Service() {
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "my_channel_id"
-        const val NOTIFICATION_ID = 1
+        const val NOTIFICATION_ID = 100
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
